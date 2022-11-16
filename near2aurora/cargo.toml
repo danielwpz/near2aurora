@@ -1,0 +1,17 @@
+[package]
+name = "near2aurora"
+version = "0.1.0"
+authors = ["danielwpz"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = """
+Helper module to call aurora smart contracts from NEAR.
+"""
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+near-sdk = "4.1.1"
+ethabi = "17.2.0"
+hex = "0.4"

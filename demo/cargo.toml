@@ -1,0 +1,14 @@
+[package]
+name = "demo"
+version = "0.1.0"
+authors = ["danielwpz"]
+edition = "2018"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+near-sdk = "4.1.1"
+near-contract-standards = "4.0.0"
+near2aurora = { path = "../near2aurora/"}
