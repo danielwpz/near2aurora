@@ -8,3 +8,6 @@ endef
 build_demo: demo
 	$(call compile_release,demo)
 	cp target/wasm32-unknown-unknown/release/demo.wasm ./demo.wasm
+
+test: demo
+	cargo test
