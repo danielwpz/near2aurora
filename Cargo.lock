@@ -56,6 +56,41 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8da52d66c7071e2e3fa2a1e5c6d088fec47b593032b254f5e980de8ea54454d6"
 
 [[package]]
+name = "aurora-engine-sdk"
+version = "1.0.0"
+source = "git+https://github.com/aurora-is-near/aurora-engine.git?rev=f6747cbe1176c298e9d6fb5dab59f73cc1081e21#f6747cbe1176c298e9d6fb5dab59f73cc1081e21"
+dependencies = [
+ "aurora-engine-types 1.0.0 (git+https://github.com/aurora-is-near/aurora-engine.git?rev=f6747cbe1176c298e9d6fb5dab59f73cc1081e21)",
+ "base64 0.21.0",
+ "borsh",
+ "sha2 0.10.6",
+ "sha3",
+]
+
+[[package]]
+name = "aurora-engine-types"
+version = "1.0.0"
+source = "git+https://github.com/aurora-is-near/aurora-engine.git?rev=5416ffc790f6c98421756f9d06993be4a55875bb#5416ffc790f6c98421756f9d06993be4a55875bb"
+dependencies = [
+ "borsh",
+ "hex",
+ "primitive-types 0.12.1",
+ "serde",
+]
+
+[[package]]
+name = "aurora-engine-types"
+version = "1.0.0"
+source = "git+https://github.com/aurora-is-near/aurora-engine.git?rev=f6747cbe1176c298e9d6fb5dab59f73cc1081e21#f6747cbe1176c298e9d6fb5dab59f73cc1081e21"
+dependencies = [
+ "borsh",
+ "hex",
+ "primitive-types 0.12.1",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -72,6 +107,12 @@ name = "base64"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
+
+[[package]]
+name = "base64"
+version = "0.21.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4a4ddaa51a5bc52a6948f74c06d20aaaddb71924eab79b8c97a8c556e942d6a"
 
 [[package]]
 name = "bitvec"
@@ -378,6 +419,7 @@ dependencies = [
 name = "demo"
 version = "0.1.0"
 dependencies = [
+ "aurora-engine-types 1.0.0 (git+https://github.com/aurora-is-near/aurora-engine.git?rev=5416ffc790f6c98421756f9d06993be4a55875bb)",
  "near-contract-standards",
  "near-sdk",
  "near2aurora",
@@ -474,9 +516,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "11da94e443c60508eb62cf256243a64da87304c2802ac2528847f79d750007ef"
 dependencies = [
  "crunchy",
- "fixed-hash",
+ "fixed-hash 0.7.0",
  "impl-rlp",
- "impl-serde",
+ "impl-serde 0.3.2",
  "tiny-keccak",
 ]
 
@@ -487,9 +529,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b2827b94c556145446fcce834ca86b7abf0c39a805883fe20e72c5bfdb5a0dc6"
 dependencies = [
  "ethbloom",
- "fixed-hash",
+ "fixed-hash 0.7.0",
  "impl-rlp",
- "impl-serde",
+ "impl-serde 0.3.2",
  "primitive-types 0.11.1",
  "uint",
 ]
@@ -503,6 +545,15 @@ dependencies = [
  "byteorder",
  "rand 0.8.5",
  "rustc-hex",
+ "static_assertions",
+]
+
+[[package]]
+name = "fixed-hash"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "835c052cb0c08c1acf6ffd71c022172e18723949c8282f2b9f27efbc51e64534"
+dependencies = [
  "static_assertions",
 ]
 
@@ -627,6 +678,15 @@ name = "impl-serde"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4551f042f3438e64dbd6226b20527fc84a6e1fe65688b58746a2f53623f25f5c"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "impl-serde"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ebc88fc67028ae3db0c853baa36269d398d5f45b6982f95549ff5def78c935cd"
 dependencies = [
  "serde",
 ]
@@ -918,6 +978,8 @@ dependencies = [
 name = "near2aurora"
 version = "0.1.0"
 dependencies = [
+ "aurora-engine-sdk",
+ "aurora-engine-types 1.0.0 (git+https://github.com/aurora-is-near/aurora-engine.git?rev=f6747cbe1176c298e9d6fb5dab59f73cc1081e21)",
  "ethabi",
  "getrandom 0.2.8",
  "hex",
@@ -1055,7 +1117,7 @@ version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05e4722c697a58a99d5d06a08c30821d7c082a4632198de1eaa5a6c22ef42373"
 dependencies = [
- "fixed-hash",
+ "fixed-hash 0.7.0",
  "impl-codec 0.5.1",
  "uint",
 ]
@@ -1066,10 +1128,22 @@ version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e28720988bff275df1f51b171e1b2a18c30d194c4d2b61defdacecd625a5d94a"
 dependencies = [
- "fixed-hash",
+ "fixed-hash 0.7.0",
  "impl-codec 0.6.0",
  "impl-rlp",
- "impl-serde",
+ "impl-serde 0.3.2",
+ "uint",
+]
+
+[[package]]
+name = "primitive-types"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f3486ccba82358b11a77516035647c34ba167dfa53312630de83b12bd4f3d66"
+dependencies = [
+ "fixed-hash 0.8.0",
+ "impl-rlp",
+ "impl-serde 0.4.0",
  "uint",
 ]
 

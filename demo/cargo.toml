@@ -12,3 +12,4 @@ crate-type = ["cdylib"]
 near-sdk = "4.1.1"
 near-contract-standards = "4.0.0"
 near2aurora = { path = "../near2aurora/"}
+aurora-engine-types = { git = "https://github.com/aurora-is-near/aurora-engine.git", rev = "5416ffc790f6c98421756f9d06993be4a55875bb", default-features = false, features = ["contracts-std", "impl-serde"] }
