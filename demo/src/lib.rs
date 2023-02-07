@@ -1,8 +1,9 @@
-use near2aurora::{Param, Token};
+use near2aurora::{parse_output, Param, SubmitResult, Token};
 use near_sdk::{
     borsh::{self, BorshDeserialize, BorshSerialize},
+    env,
     json_types::U128,
-    near_bindgen, AccountId, PanicOnDefault,
+    near_bindgen, AccountId, PanicOnDefault, Promise,
 };
 
 #[near_bindgen]
@@ -24,7 +25,7 @@ impl Demo {
         self.aurora.clone()
     }
 
-    pub fn approve(&self, token: String, amount: U128, spender: String) {
+    pub fn approve(&self, token: String, amount: U128, spender: String) -> Promise {
         #[allow(deprecated)]
         let method = near2aurora::Function {
             name: "approve".to_string(),
@@ -53,12 +54,29 @@ impl Demo {
             &self.aurora,
             &token,
             &method,
-            &vec![
+            &[
                 Token::Address(spender.parse().unwrap()),
                 Token::Uint(amount.0.into()),
             ],
             None,
             None,
-        );
+        )
+        .then(Self::ext(env::current_account_id()).on_approve())
+    }
+
+    #[private]
+    pub fn on_approve(
+        &self,
+        #[serializer(borsh)]
+        #[callback_unwrap]
+        result: SubmitResult,
+    ) -> bool {
+        match parse_output(result) {
+            Result::Ok(val) => !val.is_zero(),
+            Result::Err(err) => {
+                env::log_str(&err);
+                false
+            }
+        }
     }
 }

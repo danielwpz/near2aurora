@@ -1,3 +1,5 @@
+use crate::ethereum_types::U256;
+pub use aurora_engine_types::parameters::engine::{SubmitResult, TransactionStatus};
 pub use ethabi::*;
 use near_sdk::{
     borsh::{self, BorshSerialize},
@@ -6,6 +8,11 @@ use near_sdk::{
 
 type AuroraAddress = [u8; 20];
 type Wei = [u8; 32];
+
+/// Indicates an error with signature `Error(String)`. For more information see:
+/// * https://docs.soliditylang.org/en/v0.8.18/control-structures.html#assert-and-require
+/// * https://www.4byte.directory/signatures/?bytes4_signature=0x08c379a0
+pub const SOLIDITY_ERROR_SELECTOR: [u8; 4] = [8, 195, 121, 160];
 
 #[derive(borsh::BorshSerialize)]
 struct CallArgs {
@@ -29,7 +36,7 @@ pub fn call(
     aurora_account_id: &AccountId,
     contract_address: &String,
     method: &Function,
-    arguments: &Vec<Token>,
+    arguments: &[Token],
     value: Option<Wei>,
     gas: Option<Gas>,
 ) -> Promise {
@@ -58,6 +65,44 @@ pub fn call(
         0,
         gas.unwrap_or(default_gas),
     )
+}
+
+pub fn parse_output(result: SubmitResult) -> core::result::Result<U256, String> {
+    match result.status {
+        TransactionStatus::Succeed(bytes) => {
+            let u256_result = U256::from_big_endian(&bytes);
+            Ok(u256_result)
+        }
+        TransactionStatus::Revert(bytes) => {
+            let error_message = format!("Revert: {}", parse_evm_revert_message(&bytes));
+            Err(error_message)
+        }
+        TransactionStatus::OutOfGas => Err("Err: Out of gas".into()),
+        TransactionStatus::OutOfFund => Err("Err: Out of Fund".into()),
+        TransactionStatus::OutOfOffset => Err("Err: Out of offset".into()),
+        TransactionStatus::CallTooDeep => Err("Err: Call too deep".into()),
+    }
+}
+
+pub fn parse_evm_revert_message(input: &[u8]) -> String {
+    if input.len() < 4 {
+        return format!("0x{}", hex::encode(input));
+    }
+
+    let decoded = if input[0..4] == SOLIDITY_ERROR_SELECTOR {
+        try_abi_parse_revert_message(input)
+    } else {
+        None
+    };
+
+    decoded.unwrap_or_else(|| format!("0x{}", hex::encode(input)))
+}
+
+fn try_abi_parse_revert_message(input: &[u8]) -> Option<String> {
+    ethabi::decode(&[ethabi::ParamType::String], &input[4..])
+        .ok()?
+        .pop()?
+        .into_string()
 }
 
 #[cfg(test)]
